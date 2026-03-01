@@ -6,6 +6,10 @@ from dotenv import load_dotenv
 import models
 from api_client import CurseClient
 from parser import ModListParser
+from sync_engine import SyncEngine
+from downloader import Downloader
+
+import json # TODO remove after testing
 
 load_dotenv()
 
@@ -24,6 +28,7 @@ async def main():
     
     api_key = os.getenv("CURSE_FORGE_API", "")
     modlist_path = "data/modlist.txt" # TODO add it to the env file
+    manifest_path = "data/manifest.json" # TODO add it to the env file
     #print(f"Key loaded: {api_key}")
 
 
@@ -40,16 +45,23 @@ async def main():
         print(f"FATAL ERROR: {e}")
         return
 
+    sengine = SyncEngine(manifest_path)
+    downloader = Downloader()
+
     for slug in sluglist:
         try:
             print(f"Processing: {slug}")
-            pass
+            #print(await cclient.get_game_id("hytale"))
+            mod_data = await cclient.get_mod_data(slug)
+            folder_path = sengine.prepare_for_download(mod_data)
+            if folder_path:
+                download_url = await cclient.get_mod_download_url(mod_data)
+                await downloader.download_mod(mod_data,download_url, folder_path)
+                sengine.update_record(mod_data, mod_data.filename)
         except Exception as e:
             print(f"Skipping {slug} due to error: {e}")
             continue
         
-    
 
 if __name__ == "__main__":
-    # Use asyncio.run to start the event loop
     asyncio.run(main())
