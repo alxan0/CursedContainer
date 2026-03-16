@@ -6,8 +6,9 @@ from models import HytaleMod, ModType
 
 class SyncEngine:
 
-    def __init__(self, manifest_path: str):
+    def __init__(self, manifest_path: str, base_path: str):
         self.manifest_path = manifest_path
+        self.base_path = base_path
         self.data = self._load_file()
 
     def _load_file(self) -> dict:
@@ -42,15 +43,15 @@ class SyncEngine:
     def _get_target_path(self, mod_type: ModType): # TODO add proper ModType handling other then normal mods
         match mod_type:
             case ModType.MOD:
-                return "mods"
+                return os.path.join(self.base_path, "mods")
             case ModType.PREFAB:
-                return "mods"
+                return os.path.join(self.base_path, "mods")
             case ModType.WORLD:
-                return "mods"
+                return os.path.join(self.base_path, "mods")
             case ModType.BOOTSTRAP:
-                return "mods"
+                return os.path.join(self.base_path, "mods")
             case ModType.TRANSLATION:
-                return "mods"
+                return os.path.join(self.base_path, "mods")
             case _:
                 raise NotImplementedError(f"ModType {mod_type} is not yet supported")
             

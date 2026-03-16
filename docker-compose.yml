@@ -1,0 +1,10 @@
+services:
+  app:
+    build: .
+    userns_mode: "keep-id"
+    user: "1000:1000"
+    environment:
+      - CURSE_FORGE_API=${CURSE_FORGE_API}
+    volumes:
+      - ./data:/app/data:Z
+      - ./mods:/app/mods:Z

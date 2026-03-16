@@ -2,6 +2,8 @@
 data/manifest.json
 data/modlist.txt
 
+mods
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[codz]

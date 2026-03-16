@@ -1,0 +1,41 @@
+# VCS / editor
+.git
+.gitignore
+.vscode/
+.devcontainer/
+
+# Python cache/build artifacts
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+build/
+dist/
+*.egg-info/
+
+# Local env/secrets
+.venv/
+venv/
+.env
+.env.*
+*.pem
+*.key
+
+# Runtime output — never bake into the image
+mods/
+data/
+
+# Docker/compose files — not needed in the image
+Dockerfile
+Dockerfile.*
+docker-compose*.yml
+compose*.yaml
+compose*.yml
+.dockerignore
+
+# Docs
+README.md
+LICENSE

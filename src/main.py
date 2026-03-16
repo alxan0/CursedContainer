@@ -2,6 +2,7 @@ import os
 import sys
 import asyncio
 from dotenv import load_dotenv
+import logging
 
 import models
 from api_client import CurseClient
@@ -9,7 +10,7 @@ from parser import ModListParser
 from sync_engine import SyncEngine
 from downloader import Downloader
 
-import json # TODO remove after testing
+logging.basicConfig(level=logging.INFO, format='%(levelname)s: %(message)s') # TODO create a logger for every module
 
 load_dotenv()
 
@@ -27,8 +28,9 @@ async def check_api_healty(cclient):
 async def main():
     
     api_key = os.getenv("CURSE_FORGE_API", "")
-    modlist_path = "data/modlist.txt" # TODO add it to the env file
-    manifest_path = "data/manifest.json" # TODO add it to the env file
+    base_path = os.getenv("APP_BASE_PATH", "")
+    modlist_path = os.path.join(base_path, "data/modlist.txt") 
+    manifest_path = os.path.join(base_path, "data/manifest.json")
     #print(f"Key loaded: {api_key}")
 
 
@@ -45,7 +47,7 @@ async def main():
         print(f"FATAL ERROR: {e}")
         return
 
-    sengine = SyncEngine(manifest_path)
+    sengine = SyncEngine(manifest_path, base_path)
     downloader = Downloader()
 
     for slug in sluglist:
