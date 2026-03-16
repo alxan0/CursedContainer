@@ -11,13 +11,10 @@ RUN python3 -m venv /opt/venv
 
 COPY requirements.txt /tmp/requirements.txt
 RUN /opt/venv/bin/pip install --no-cache-dir --require-hashes -r /tmp/requirements.txt
-RUN chmod -R a+rX /opt/venv
-
-#RUN python3 -m venv /opt/venv \
-# && /opt/venv/bin/pip install --require-hashes -r /tmp/requirements.txt \
+RUN chmod -R 555 /opt/venv
 
 COPY . /app
-RUN chmod -R a+rX /app
+RUN chmod -R 555 /app
 
 # use python3-debian13:debug-nonroot when you need a busybox shell
 FROM gcr.io/distroless/python3-debian13:nonroot
@@ -29,6 +26,7 @@ WORKDIR /app
 ENV PATH="/opt/venv/bin:$PATH" \
     PYTHONDONTWRITEBYTECODE=1 \
     PYTHONUNBUFFERED=1 \
-    APP_BASE_PATH="/app"
+    APP_BASE_PATH="/app" \
+    SYNC_INTERVAL=24
 
 ENTRYPOINT ["/opt/venv/bin/python3", "src/main.py"]

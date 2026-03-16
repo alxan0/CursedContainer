@@ -1,2 +1,45 @@
 # CursedContainer
-CursedContainer - A Dockerized, set-it-and-forget-it mod synchronization tool for CurseForge.
+
+CursedContainer - A Dockerized, set-it-and-forget-it mod synchronization tool for Hytale.
+
+## Features
+- Parses mod entries from [data/modlist.txt](data/modlist.txt)
+- Accepts full CurseForge URLs or plain slugs
+- Downloads the latest main file for each Hytale mod from CurseForge
+- Verifies downloads with SHA-1 before keeping files
+- Tracks installed versions and sync history in [data/manifest.json](data/manifest.json)
+- Replaces old files when a newer version is available
+
+## Requirements
+- Docker or a container engine
+- [CurseForge API key](https://docs.curseforge.com/rest-api/#getting-started)
+## Setup
+### 1) Docker Compose (Recommended)
+
+```yml
+services:
+	app:
+	    image: localhost/cursedcontainer_app
+		userns_mode: "keep-id" # only needed when using podman
+		user: "1000:1000"
+		environment:
+			- CURSE_FORGE_API=${CURSE_FORGE_API}
+		volumes:
+		- ./data:/app/data:Z
+		- ./mods:/app/mods:Z
+```
+
+Create a `.env` file in the project root:
+```env
+CURSE_FORGE_API=your_api_key_here
+```
+
+
+##  Configuration Variables
+
+| Environment Variable | Description                                           | Required |
+| :------------------- | :---------------------------------------------------- | :------- |
+| `CURSE_FORGE_API`    | Your CurseForge Core API Key.                         | **Yes**  |
+| `APP_BASE_PATH`      | The internal base path for the app (default: `/app`). | No       |
+| `SYNC_INTERVAL`      | The time interval between update checks.              | No       |
+

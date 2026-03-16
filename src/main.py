@@ -29,6 +29,7 @@ async def main():
     
     api_key = os.getenv("CURSE_FORGE_API", "")
     base_path = os.getenv("APP_BASE_PATH", "")
+    sync_interval = os.getenv("SYNC_INTERVAL", "24")
     modlist_path = os.path.join(base_path, "data/modlist.txt") 
     manifest_path = os.path.join(base_path, "data/manifest.json")
     #print(f"Key loaded: {api_key}")
@@ -40,29 +41,32 @@ async def main():
 
     cclient = CurseClient(api_key)
     #await check_api_healty(cclient)
-
-    try:
-        sluglist = ModListParser(modlist_path)
-    except FileNotFoundError as e:
-        print(f"FATAL ERROR: {e}")
-        return
-
     sengine = SyncEngine(manifest_path, base_path)
     downloader = Downloader()
 
-    for slug in sluglist:
+    while True:
         try:
-            print(f"Processing: {slug}")
-            #print(await cclient.get_game_id("hytale"))
-            mod_data = await cclient.get_mod_data(slug)
-            folder_path = sengine.prepare_for_download(mod_data)
-            if folder_path:
-                download_url = await cclient.get_mod_download_url(mod_data)
-                await downloader.download_mod(mod_data,download_url, folder_path)
-                sengine.update_record(mod_data, mod_data.filename)
-        except Exception as e:
-            print(f"Skipping {slug} due to error: {e}")
-            continue
+            sluglist = ModListParser(modlist_path)
+        except FileNotFoundError as e:
+            print(f"FATAL ERROR: {e}")
+            return  
+
+        for slug in sluglist:
+            try:
+                print(f"Processing: {slug}")
+                #print(await cclient.get_game_id("hytale"))
+                mod_data = await cclient.get_mod_data(slug)
+                folder_path = sengine.prepare_for_download(mod_data)
+                if folder_path:
+                    download_url = await cclient.get_mod_download_url(mod_data)
+                    await downloader.download_mod(mod_data,download_url, folder_path)
+                    sengine.update_record(mod_data, mod_data.filename)
+            except Exception as e:
+                print(f"Skipping {slug} due to error: {e}")
+                continue
+        
+        logging.info(f"Sleeping for {sync_interval} hours...")
+        await asyncio.sleep(int(sync_interval)*3600)
         
 
 if __name__ == "__main__":
