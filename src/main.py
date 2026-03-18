@@ -29,7 +29,8 @@ async def main():
     
     api_key = os.getenv("CURSE_FORGE_API", "")
     base_path = os.getenv("APP_BASE_PATH", "")
-    sync_interval = os.getenv("SYNC_INTERVAL", "24")
+    sync_interval = int(os.getenv("SYNC_INTERVAL", "0"))
+
     modlist_path = os.path.join(base_path, "data/modlist.txt") 
     manifest_path = os.path.join(base_path, "data/manifest.json")
     #print(f"Key loaded: {api_key}")
@@ -65,8 +66,11 @@ async def main():
                 print(f"Skipping {slug} due to error: {e}")
                 continue
         
+        if sync_interval == 0:
+            break
+
         logging.info(f"Sleeping for {sync_interval} hours...")
-        await asyncio.sleep(int(sync_interval)*3600)
+        await asyncio.sleep(sync_interval*3600)
         
 
 if __name__ == "__main__":

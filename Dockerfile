@@ -27,6 +27,6 @@ ENV PATH="/opt/venv/bin:$PATH" \
     PYTHONDONTWRITEBYTECODE=1 \
     PYTHONUNBUFFERED=1 \
     APP_BASE_PATH="/app" \
-    SYNC_INTERVAL=24
+    SYNC_INTERVAL=0
 
 ENTRYPOINT ["/opt/venv/bin/python3", "src/main.py"]
