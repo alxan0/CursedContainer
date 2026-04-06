@@ -3,6 +3,8 @@ services:
     build: .
     userns_mode: "keep-id"
     user: "1000:1000"
+    stop_grace_period: 30s
+    init: true
     environment:
       - CURSE_FORGE_API=${CURSE_FORGE_API}
     volumes:
