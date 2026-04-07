@@ -21,7 +21,7 @@ CursedContainer - A Dockerized, set-it-and-forget-it mod synchronization tool fo
 ```yml
 services:
     app:
-        image: localhost/cursedcontainer_app
+        image: ghcr.io/alxan0/cursedcontainer:latest
         user: "1000:1000"
         environment:
             - CURSE_FORGE_API=${CURSE_FORGE_API}
@@ -35,7 +35,7 @@ services:
 ```yml
 services:
     app:
-        image: localhost/cursedcontainer_app
+        image: ghcr.io/alxan0/cursedcontainer:latest
         userns_mode: "keep-id"
         user: "1000:1000"
         environment:
@@ -63,7 +63,6 @@ https://www.curseforge.com/hytale/mods/eyespyadmin-tools-reforged
 ## Configuration Variables
 
 `CURSE_FORGE_API` **or** `CURSE_FORGE_API_FILE` must be provided.
-
 | Environment Variable | Description | Default | Required |
 | :------------------- | :---------- | :------ | :------- |
 | `CURSE_FORGE_API` | CurseForge Core API key as plain env var. | None | One of `CURSE_FORGE_API` / `CURSE_FORGE_API_FILE` |
@@ -74,4 +73,3 @@ https://www.curseforge.com/hytale/mods/eyespyadmin-tools-reforged
 | `DOWNLOAD_TIMEOUT_SECONDS` | Read/write timeout for HTTP requests. | `60` | No |
 | `CONNECT_TIMEOUT_SECONDS` | Connection timeout for HTTP requests. | `10` | No |
 | `APP_TIMEZONE` | Timezone used for manifest timestamps (IANA format, e.g. `Europe/Stockholm`). | `UTC` | No |
-
