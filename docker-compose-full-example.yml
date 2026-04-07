@@ -45,9 +45,8 @@ services:
         https://www.curseforge.com/hytale/mods/oresight-easy-ore-viewing-mod
     volumes:
       - ${HYTALE_MODS_PATH:-/path/to/hytale/mods}:/app/mods
-      - cursed_data:/app/data
-volumes:
-  cursed_data: null
+      # Must be writable by ${PUID}:${PGID} so manifest updates can be saved
+      - ${CURSED_DATA_PATH:-/path/to/hytale/cursed-data}:/app/data
 networks:
   default:
     name: hytale_network
