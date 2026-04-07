@@ -93,9 +93,10 @@ class Downloader:
         
         self._validate_download_url(download_url)
         safe_filename = self._sanitize_filename(mod_data.filename)
-
+        mod_data.filename = safe_filename
+        
         os.makedirs(folder_path, mode=0o755, exist_ok=True)
-        final_path = self._resolve_safe_path(folder_path, safe_filename)
+        final_path = self._resolve_safe_path(folder_path, mod_data.filename)
         
         fd, temp_path = tempfile.mkstemp(prefix=".part-", dir=os.path.realpath(folder_path))
         os.close(fd)

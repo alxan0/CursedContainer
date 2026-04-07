@@ -23,14 +23,14 @@ class ModListParser:
         self._load_file()
 
     def _load_file(self) -> None:
-            if not os.path.exists(self.file_path):
-                raise FileNotFoundError(f"Missing mod list at {self.file_path}")
+        if not os.path.exists(self.file_path):
+            raise FileNotFoundError(f"Missing mod list at {self.file_path}")
 
-            with open(self.file_path, "r", encoding="utf-8") as fin:
-                for line_no, line in enumerate(fin, start=1):
-                    value = line.strip()
-                    if value and not value.startswith("#"):
-                        self._lines.append((line_no, value))
+        with open(self.file_path, "r", encoding="utf-8") as fin:
+            for line_no, line in enumerate(fin, start=1):
+                value = line.strip()
+                if value and not value.startswith("#"):
+                    self._lines.append((line_no, value))
 
     def __iter__(self):
         return self
