@@ -25,12 +25,20 @@ class Settings(BaseSettings):
     max_mod_file_size_mb: int = Field(default=1024, alias="MAX_MOD_FILE_SIZE_MB", gt=0)
     download_timeout_seconds: float = Field(default=60.0, alias="DOWNLOAD_TIMEOUT_SECONDS", gt=0)
     connect_timeout_seconds: float = Field(default=10.0, alias="CONNECT_TIMEOUT_SECONDS", gt=0)
+    mods: str = Field(default="", alias="MODS")
     
     timezone: str = Field(default="UTC", alias="APP_TIMEZONE")
 
     @property
     def max_mod_file_size_bytes(self) -> int:
         return self.max_mod_file_size_mb * 1024 * 1024
+
+    @property
+    def mods_entries(self) -> list[str]:
+        if not self.mods:
+            return []
+
+        return [line.strip() for line in self.mods.splitlines() if line.strip()]
 
     @field_validator("timezone")
     @classmethod

@@ -1,6 +1,7 @@
 services:
   app:
     image: ghcr.io/alxan0/cursedcontainer:latest
+    userns_mode: "keep-id"
     user: "1000:1000"
     environment:
       CURSE_FORGE_API: ${CURSE_FORGE_API}
@@ -8,5 +9,5 @@ services:
         bettermap
         https://www.curseforge.com/hytale/mods/eyespyadmin-tools-reforged
     volumes:
-      - ./data:/app/data
-      - ./mods:/app/mods
+      - ./data:/app/data:Z
+      - ./mods:/app/mods:Z

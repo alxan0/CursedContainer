@@ -56,13 +56,32 @@ def bootstrap() -> AppContext:
 async def run_sync_loop(ctx: AppContext, shutdown_event: asyncio.Event) -> None:
     try:
         while not shutdown_event.is_set():
+            env_slugs = list(ModListParser.from_entries(ctx.settings.mods_entries, source_name="MODS"))
+
             try:
-                sluglist = ModListParser(ctx.modlist_path)
+                file_slugs = list(ModListParser(ctx.modlist_path))
             except FileNotFoundError as exc:
-                logging.error(f"Fatal error: {exc}")
+                if env_slugs:
+                    logging.warning(f"{exc}. Continuing with MODS only.")
+                    file_slugs = []
+                else:
+                    logging.error(f"Fatal error: {exc}")
+                    return
+
+            combined_slugs = env_slugs + file_slugs
+            seen: set[str] = set()
+            unique_slugs: list[str] = []
+            for slug in combined_slugs:
+                if slug in seen:
+                    continue
+                seen.add(slug)
+                unique_slugs.append(slug)
+
+            if not unique_slugs:
+                logging.error("Fatal error: no valid mod entries found in MODS or data/modlist.txt")
                 return
 
-            for slug in sluglist:
+            for slug in unique_slugs:
                 try:
                     logging.info(f"Processing: {slug}")
                     mod_data = await ctx.cclient.get_mod_data(slug)

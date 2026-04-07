@@ -1,0 +1,53 @@
+services:
+  hytale:
+    image: indifferentbroccoli/hytale-server-docker
+    container_name: hytale
+    security_opt:
+      - no-new-privileges:true
+    environment:
+      PUID: ${PUID:-1000}
+      PGID: ${PGID:-1000}
+      SERVER_NAME: ThePerfectAdventure
+      MAX_PLAYERS: 2
+      VIEW_DISTANCE: 10
+      ENABLE_BACKUPS: true
+      MIN_MEMORY: 4G
+      MAX_MEMORY: 4G
+      JVM_ARGS: -XX:+UnlockExperimentalVMOptions -XX:+UseCompactObjectHeaders -XX:+UseG1GC -XX:MaxGCPauseMillis=50 -XX:G1HeapRegionSize=8M -XX:+AlwaysPreTouch -XX:+ParallelRefProcEnabled -XX:+ExitOnOutOfMemoryError
+    ports:
+      - 5520:5520/udp
+    env_file:
+      - .env
+    volumes:
+      - ${HYTALE_SERVER_FILES_PATH:-/path/to/hytale/server-files}:/home/hytale/server-files
+    stdin_open: true
+    tty: true
+    restart: unless-stopped
+    stop_grace_period: 30s
+    depends_on:
+      cursedcontainer:
+        condition: service_completed_successfully
+  cursedcontainer:
+    image: ghcr.io/alxan0/cursedcontainer:latest
+    user: ${PUID:-1000}:${PGID:-1000}
+    environment:
+      CURSE_FORGE_API: ${CURSE_FORGE_API}
+      SYNC_INTERVAL: 0
+      APP_TIMEZONE: Europe/Stockholm
+      MAX_MOD_FILE_SIZE_MB: 1024
+      DOWNLOAD_TIMEOUT_SECONDS: 60
+      CONNECT_TIMEOUT_SECONDS: 10
+      MODS: |
+        https://www.curseforge.com/hytale/mods/bettermap
+        https://www.curseforge.com/hytale/mods/eyespy
+        https://www.curseforge.com/hytale/mods/veinmining
+        https://www.curseforge.com/hytale/mods/ymmersive-melodies
+        https://www.curseforge.com/hytale/mods/oresight-easy-ore-viewing-mod
+    volumes:
+      - ${HYTALE_MODS_PATH:-/path/to/hytale/mods}:/app/mods
+      - cursed_data:/app/data
+volumes:
+  cursed_data: null
+networks:
+  default:
+    name: hytale_network

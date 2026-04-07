@@ -1,6 +1,7 @@
 import logging
 import os
 import re
+from typing import Iterable
 from urllib.parse import urlparse
 
 class ParserError(Exception):
@@ -21,6 +22,20 @@ class ModListParser:
         self._lines: list[tuple[int, str]] = []
         self._index = 0
         self._load_file()
+
+    @classmethod
+    def from_entries(cls, entries: Iterable[str], source_name: str = "MODS") -> "ModListParser":
+        parser = cls.__new__(cls)
+        parser.file_path = source_name
+        parser._lines = []
+        parser._index = 0
+
+        for line_no, line in enumerate(entries, start=1):
+            value = line.strip()
+            if value and not value.startswith("#"):
+                parser._lines.append((line_no, value))
+
+        return parser
 
     def _load_file(self) -> None:
         if not os.path.exists(self.file_path):
